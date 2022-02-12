@@ -53,10 +53,7 @@ addEventListener('DOMContentLoaded', () => {
 
     let currentPosition = 4
     let currentRotation = 0
-
-    function initialPosition() {
-
-    }
+ 
 
     let random = Math.floor(Math.random() * theTetrominoes.length)
     let current = theTetrominoes[random][currentRotation]
@@ -75,7 +72,7 @@ addEventListener('DOMContentLoaded', () => {
             
         })
     }
-    // timerId = setInterval(moveDown, 1000)
+
 
     function control(e) {
         if(e.keyCode === 37) {
@@ -91,11 +88,13 @@ addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keyup', control)
 
+    // timerId = setInterval(moveDown, 1000)
+
     function moveDown() {
+        freeze()
         undraw()
         currentPosition += width
         draw()
-        freeze()
     }
 
     function moveLeft() {
@@ -108,11 +107,21 @@ addEventListener('DOMContentLoaded', () => {
         draw()
       }
 
+      function moveRight() {
+        undraw()
+        const isAtRightEdge = current.some(index => (currentPosition + index) % width === width -1)
+        if(!isAtRightEdge) currentPosition +=1
+        if(current.some(index => squares[currentPosition + index].classList.contains('taken'))) {
+          currentPosition -=1
+        }
+        draw()
+      }
+
     function freeze() {
         if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))) {
             current.forEach(index => {
                 squares[currentPosition + index].classList.add('taken')
-            })
+              })
 
             random = Math.floor(Math.random() * theTetrominoes.length)
             current = theTetrominoes[random][currentRotation]
@@ -121,5 +130,17 @@ addEventListener('DOMContentLoaded', () => {
             draw()
         }
 
+    }
+
+    function rotate() {
+      undraw()
+      currentRotation++
+
+      if(currentRotation === current.length) {
+        currentRotation = 0
+      }
+
+      current = theTetrominoes[random][currentRotation]
+      draw()
     }
 })
