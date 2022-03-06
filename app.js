@@ -1,7 +1,9 @@
 addEventListener('DOMContentLoaded', () => {
     const grid = document.querySelector('.grid')
     let squares = Array.from(document.querySelectorAll('.grid div'))
+    const scoreDisplay = document.querySelector('.score')
 
+    let score = 0
     const width = 10
     let timerId
 
@@ -88,7 +90,7 @@ addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keyup', control)
 
-    // timerId = setInterval(moveDown, 1000)
+    timerId = setInterval(moveDown, 1000)
 
     function moveDown() {
         freeze()
@@ -128,7 +130,9 @@ addEventListener('DOMContentLoaded', () => {
             currentPosition = 4
     
             draw()
+            addScore()
         }
+
 
     }
 
@@ -142,5 +146,25 @@ addEventListener('DOMContentLoaded', () => {
 
       current = theTetrominoes[random][currentRotation]
       draw()
+    }
+
+    function addScore() {
+      for (let i = 0; i < 120; i +=width) {
+        const row = [i, i+1, i+2, i+3, i+4, i+5, i+6, i+7, i+8, i+9]
+  
+        if(row.every(index => squares[index].classList.contains('taken'))) {
+          score += 10
+          scoreDisplay.textContent = score
+          
+          row.forEach(index => {
+            squares[index].classList.remove('taken')
+            squares[index].classList.remove('tetromino')
+            squares[index].style.background = ''
+          })
+          const squaresRemoved = squares.splice(i, width)
+          squares = squaresRemoved.concat(squares)
+          squares.forEach(cell => grid.appendChild(cell))
+        }
+      }
     }
 })
